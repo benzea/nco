@@ -1,0 +1,48 @@
+% getikz enable true
+% getikz library positioning,arrows,decorations.markings,calc
+
+\tikzset{
+  element/.style={
+    draw,
+  },
+  bus/.style={
+    ->,thick,
+    %  \node[pos=0.5,above,allow upside down=false]{\tiny #1};
+    decoration={markings,mark=at position 0.5 with {\draw[-,thin] (-0.75pt,-2pt) to (0.75pt,2pt);}},
+    postaction = {decorate}
+  },
+}
+
+\begin{tikzpicture}
+
+  \node[element,align=center] (cordic) {pipelined \\ CORDIC};
+
+  \node[coordinate] (cordic cos) at ($0.5*(cordic.east) + 0.5*(cordic.north east)$) {a};
+  \node[coordinate] (cordic sin) at ($0.5*(cordic.east) + 0.5*(cordic.south east)$) {a};
+
+  \node[right=of cordic cos,anchor=mid west] (cos) {cos};
+  \node[right=of cordic sin,anchor=mid west] (sin) {sin};
+
+  \draw[bus] (cordic cos) to  node[auto=right] {\tiny $N_\mathrm{R}$} (cos.mid west);
+  \draw[bus] (cordic sin) to (sin.mid west);
+
+  \node[draw,circle,left=of cordic] (dither) {+};
+
+  \node[coordinate,left=of dither] (accu split) {};
+  \node[above=of dither,align=center] (dither in) {PRNG\\$\phi_\mathrm{dither}$};
+
+  \draw[bus] (dither in) to node[auto=left] {\tiny $N_{\phi_\mathrm{dither}}$} (dither);
+
+  \node[draw,circle,left=of accu split] (add) {+};
+
+  \draw[bus] (accu split) to node[auto=left] {\tiny $N_\phi$} (dither);
+  \draw[bus] (dither) to (cordic);
+  \draw[bus,-] (add) to  node[auto=left] {\tiny $N_{\phi_\mathrm{acc}}$} (accu split);
+  \draw[bus] (accu split) |- +(-0em,-2em) -| (add);
+
+  \node[left=of add] (phi step) {$\Delta\phi$};
+
+  \draw[bus] (phi step) to  node[auto=left] {\tiny $N_{\Delta\phi}$} (add);
+
+\end{tikzpicture}
+
