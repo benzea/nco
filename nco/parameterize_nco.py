@@ -484,6 +484,44 @@ class Parameterize(object):
 
         self.simulate.start()
 
+    def get_hwgen_args(self):
+        clock = myhdl.Signal(bool())
+        reset = myhdl.ResetSignal(bool(True), True, True)
+        phase_step = myhdl.Signal(myhdl.intbv(0)[self.params.phase_acc_bits:])
+        BITS = self.params.out_bits
+        cos_out = myhdl.Signal(myhdl.intbv(0, -2**(BITS-1), 2**(BITS-1)))
+        sin_out = myhdl.Signal(myhdl.intbv(0, -2**(BITS-1), 2**(BITS-1)))
+
+        # Constants
+        samples = self.params.fft_samples
+
+        args = (clock, reset, phase_step, cos_out, sin_out)
+        kwargs = {
+            'PHASE_PRECISION': self.params.phase_bits,
+            'LUT_DEPTH': self.params.lut_depth,
+            'DITHER': self.params.phase_dither,
+            'CORDIC_STAGES': self.params.cordic_stages,
+        }
+
+        return nco.NCOCordic, args, kwargs
+
+
+    def generate_vhdl(self, *args):
+        func, args, kwargs = self.get_hwgen_args()
+
+        try:
+            from toVHDL_kh import toVHDL_kh as toVHDL
+        except:
+            print "Not keeping hierarchy as toVHDL_kh could not be imported!"
+            toVHDL = myhdl.toVHDL
+
+        toVHDL(func, *args, **kwargs)
+
+    def generate_verilog(self, *args):
+        func, args, kwargs = self.get_hwgen_args()
+
+        myhdl.toVerilog(func, *args, **kwargs)
+
     def quit(self, *args):
         self.simulate.cancel()
 
