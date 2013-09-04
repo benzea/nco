@@ -18,3 +18,20 @@ $ nco/parameterize_nco.py
 
 If you copy the toVHDL_kh.py file from the "myhdl-addons" repository into
 the nco directory, then multiple entities will be created.
+
+
+CORDIC
+======
+
+The CORDIC core is a fully pipelined implementation which can be
+parameterized to the required bit-depths. The pipeline consists of multiple
+stages:
+ * Initial stage that rotates the phase into the first quadrant and uses
+   a LUT for an initial estimation.
+ * A number of CORDIC stages to better approximate the output
+ * Output stage that rotates the result back into the correct quadrant.
+
+See the comment in pipelined_cordic.py for details.
+
+This CORDIC pipeline does not require any multiplication as the required
+scaling is done in the initial LUT step.
