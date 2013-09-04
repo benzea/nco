@@ -7,7 +7,7 @@ from myhdl import *
 
 
 
-def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=5, LUT_DEPTH=5, NON_SATURATING=True):
+def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=None, LUT_DEPTH=5, NON_SATURATING=True, RENAME=True):
     """Implement a Cordic polar to rectangular transformation. The
     length of the vector is one unit. The bit depth and number of pipelineing
     stages is (or will be) configurable.
@@ -53,17 +53,23 @@ def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=5, LUT_DE
      * CORDIC_STAGES:
        The overall number of pipeline steps for the CORDIC algorithm. The
        overall latency of the core is CORDIC_STAGES + 2.
+       If set to None a sane default value is selected. This default value is
+       based on the phase resolution of the input phase. With this setting the
+       maximum phase error is about 1 LSB of the input phase.
+       Default: PHASE_BITS - LUT_DEPTH - 2 (quadrant) + 1
      * LUT_DEPTH:
        The number of bits of the phase that should be used for the lookup table.
        You should set this to the number of inputs that your device can handle
        well for lookup tables. Setting it to a lower value means wasting
-       resoucres and setting it to a higher value is a waste of resources.
+       resources and setting it to a higher value is a waste of resources.
+       Default: 5 (also used when set to None)
      * NON_SATURATING:
        The output is a fractional number so its range can be [-1..1). This core
        scales the output so that the range becomes (-1..1). This means that no
        error will occur for a zero phase as 1.0 is not reached.
        If set to False, then the error is caught and the output is set to the
        largest possible value.
+       WARNING: Must currently be True!
 
 
     Input signals:
@@ -163,6 +169,16 @@ def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=5, LUT_DE
 
     QUAD_DEPTH = 2
     PHASE_PRECISION = len(phase)
+
+    if LUT_DEPTH is None:
+        LUT_DEPTH=5
+
+    if CORDIC_STAGES is None:
+        CORDIC_STAGES = PHASE_PRECISION - 2 - LUT_DEPTH + 1
+
+    if RENAME:
+        # Only has an effect if the hierarchy is extracted using toVHDL_kh.py currently
+        CordicPipeline.func_name = "CordicPipeline_%i_%i_%i_%i" % (PHASE_PRECISION, len(output_cos), LUT_DEPTH, CORDIC_STAGES)
 
     #: Extra precision for the phase register.
     if CORDIC_STAGES:
