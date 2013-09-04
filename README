@@ -1,0 +1,20 @@
+This NCO uses a CORDIC MyHDL core that is can be configured to the required
+needs. A small GUI application is included which can be used to configure
+the core and check the resulting performance characteristics.
+
+The CORDIC and Rule30 PRNG cores can be used as standalone cores.
+
+
+NCO
+===
+
+To configure the NCO and use it you need the following dependencies:
+ * GTK+ 3.x
+ * Matplotlib
+ * MyHDL 0.8
+
+Then run the script:
+$ nco/parameterize_nco.py
+
+If you copy the toVHDL_kh.py file from the "myhdl-addons" repository into
+the nco directory, then multiple entities will be created.
