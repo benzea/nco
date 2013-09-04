@@ -19,6 +19,13 @@ $ nco/parameterize_nco.py
 If you copy the toVHDL_kh.py file from the "myhdl-addons" repository into
 the nco directory, then multiple entities will be created.
 
+Phase Dithering
+---------------
+
+The phase dithering implementation is rather basic; this is an area where
+the core should be improved more. Some notes:
+ * it is not Gaussian
+ * it is added after truncating the phase for the CORDIC
 
 CORDIC
 ======
