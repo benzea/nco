@@ -131,7 +131,7 @@ class Parameters(object):
             self.phase_bits = self.lut_depth + 2
 
         # Very large dithers are simply insane ...
-        if self.phase_dither > 2 + self.phase_bits:
+        if self.phase_dither > self.phase_bits - 2:
             self.phase_dither = self.phase_bits - 2
 
     def update_labels(self):

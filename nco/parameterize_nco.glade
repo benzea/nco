@@ -43,7 +43,7 @@
     <property name="page_increment">8</property>
   </object>
   <object class="GtkAdjustment" id="phase_dither">
-    <property name="upper">5</property>
+    <property name="upper">30</property>
     <property name="step_increment">1</property>
     <property name="page_increment">5</property>
   </object>
