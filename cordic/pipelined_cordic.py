@@ -210,7 +210,8 @@ def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=None, LUT
     else:
         PHASE_NEEDED_PRECISION = PHASE_PRECISION
 
-    PHASE_EXTRA_PRECISION = max(0, PHASE_NEEDED_PRECISION - PHASE_PRECISION)
+    # Need at least one more bit for rounding purposes
+    PHASE_EXTRA_PRECISION = max(1, PHASE_NEEDED_PRECISION - PHASE_PRECISION)
 
     # All the add/subtracts should not spill into the data bits; so add some bits
     OUT_EXTRA_PRECISION = int(math.ceil(math.log(CORDIC_STAGES) / math.log(2))) + 1
