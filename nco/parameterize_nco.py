@@ -167,25 +167,29 @@ class Parameters(object):
 
     @property
     def fft_samples(self):
-        """The number of samples (below the maximum sample count) which is
-        best approximates the output frequency.
-        This is required so that the FFT does not contain too much aliasing."""
+        """Simply returns the number of samples; please modulate the output
+        of the NCO to shift the frequencies. That way the FFT hits the maximum
+        exactly."""
+#        """The number of samples (below the maximum sample count) which is
+#        best approximates the output frequency.
+#        This is required so that the FFT does not contain too much aliasing."""
 
-        # The normalized frequency
-        freq = self.actual_tone / self.frequency
+        return self.samples
+#        # The normalized frequency
+#        freq = self.actual_tone / self.frequency
 
-        best_error = 1
-        result = 0
-        for samples in range(self.samples / 2, self.samples + 1):
-            freq_resolution = 1.0 / samples
+#        best_error = 1
+#        result = 0
+#        for samples in range(self.samples / 2, self.samples + 1):
+#            freq_resolution = 1.0 / samples
 
-            error = (freq % freq_resolution)
+#            error = (freq % freq_resolution)
 
-            if best_error > error:
-                best_error = error
-                result = samples
+#            if best_error > error:
+#                best_error = error
+#                result = samples
 
-        return result
+#        return result
 
     def __copy__(self):
         new = Parameters()
@@ -402,11 +406,21 @@ class Plots(object):
         ########
         # FFT
         ########
+        # Note this is a modified FFT which is created by first modulating the
+        # input with the offset to the base frequency; by doing this we exactly
+        # hit the maximum peek
         samples = self.data.shape[0]
         amplitude = 2**(self.params.out_bits - 1) - 1
 
         freqs = np.fft.fftfreq(samples, 1 / self.params.frequency)
-        fft = np.maximum(np.abs(np.fft.fft(self.data[:,2] + 1j*self.data[:,3])), 1)/amplitude/samples
+
+        closest_freq_bin = np.argmin(np.abs(freqs - self.params.actual_tone))
+        mod_freq = freqs[closest_freq_bin] - self.params.actual_tone
+
+        freqs -= mod_freq
+        modulated_signal = (self.data[:,2] + 1j*self.data[:,3]) * np.exp(1j*self.data[:,0]*2*np.pi*mod_freq)
+
+        fft = np.maximum(np.abs(np.fft.fft(modulated_signal)), 1)/amplitude/samples
 
         self.fft_ax.clear()
         self.fft_ax.plot(np.fft.fftshift(freqs), 20*np.log10(np.fft.fftshift(fft)))
