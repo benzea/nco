@@ -44,7 +44,7 @@ def test_rule30():
 
     dut = rule30.Rule30(clock, reset, state, INITIAL_STATE, UPDATE_RULE)
 
-    @myhdl.always(myhdl.delay(10 / 2))
+    @myhdl.always(myhdl.delay(10 // 2))
     def advance_clock():
         clock.next = not clock
 
@@ -74,5 +74,5 @@ s = myhdl.Simulation(test_rule30())
 
 s.run(None)
 
-print "Everything seems good!"
+print("Everything seems good!")
 

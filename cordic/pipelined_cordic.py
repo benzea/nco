@@ -27,7 +27,7 @@
 import  math
 from myhdl import *
 
-
+@block
 def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=None, LUT_DEPTH=5, NON_SATURATING=True, RENAME=True):
     """Implement a Cordic polar to rectangular transformation. The
     length of the vector is one unit. The bit depth and number of pipelineing
@@ -130,7 +130,7 @@ def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=None, LUT
 
             lut.append((c, s))
 
-        lut = zip(*lut)
+        lut = list(zip(*lut))
 
         return tuple(lut)
 
@@ -199,7 +199,7 @@ def CordicPipeline(clock, phase, output_cos, output_sin, CORDIC_STAGES=None, LUT
 
     if RENAME:
         # Only has an effect if the hierarchy is extracted using toVHDL_kh.py currently
-        CordicPipeline.func_name = "CordicPipeline_%i_%i_%i_%i" % (PHASE_PRECISION, len(output_cos), LUT_DEPTH, CORDIC_STAGES)
+        CordicPipeline.__name__ = "CordicPipeline_%i_%i_%i_%i" % (PHASE_PRECISION, len(output_cos), LUT_DEPTH, CORDIC_STAGES)
 
     #: Extra precision for the phase register.
     if CORDIC_STAGES:

@@ -63,7 +63,7 @@ class CellularAutomata():
 
     def print_state(self):
         """Print the current state of the cellular automata."""
-        print self.state
+        print(self.state)
 
 
     def update_state(self):

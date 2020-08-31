@@ -50,7 +50,7 @@ def format_num(num):
         (-15, "f"),
         (-12, "p"),
         (-9, "n"),
-        (-6, u"µ"),
+        (-6, "µ"),
         (-3, "m"),
         (0, ""),
         (3, "k"),
@@ -137,9 +137,9 @@ class Parameters(object):
     def update_labels(self):
         self.labels['latency'].set_text('%i' % self.pipeline_length)
 
-        self.labels['phase_frequency'].set_text(u'𝚫 %sHz (%i)' % (format_num(1000*1000*(self.actual_tone - self.tone)), self.phase_step))
+        self.labels['phase_frequency'].set_text('𝚫 %sHz (%i)' % (format_num(1000*1000*(self.actual_tone - self.tone)), self.phase_step))
 
-        self.labels['frequency_resolution'].set_text(u'%sHz (%sHz)' % (format_num(1e6 * self.frequency / (2**self.phase_acc_bits)), format_num(1e6 * self.frequency / (2**self.phase_bits))))
+        self.labels['frequency_resolution'].set_text('%sHz (%sHz)' % (format_num(1e6 * self.frequency / (2**self.phase_acc_bits)), format_num(1e6 * self.frequency / (2**self.phase_bits))))
 
     def update_adjustments(self):
         assert self._adjustments is not None
@@ -546,18 +546,20 @@ class Parameterize(object):
     def generate_vhdl(self, *args):
         func, args, kwargs = self.get_hwgen_args()
 
-        try:
-            from toVHDL_kh import toVHDL_kh as toVHDL
-        except:
-            print "Not keeping hierarchy as toVHDL_kh could not be imported!"
-            toVHDL = myhdl.toVHDL
+#        try:
+#            from toVHDL_kh import toVHDL_kh as toVHDL
+#        except:
+#            print("Not keeping hierarchy as toVHDL_kh could not be imported!")
+#            toVHDL = myhdl.toVHDL
 
-        toVHDL(func, *args, **kwargs)
+        inst = func(*args, **kwargs)
+        inst.convert(hdl='VHDL')
 
     def generate_verilog(self, *args):
         func, args, kwargs = self.get_hwgen_args()
 
-        myhdl.toVerilog(func, *args, **kwargs)
+        inst = func(*args, **kwargs)
+        inst.convert(hdl='Verilog')
 
     def quit(self, *args):
         self.simulate.cancel()

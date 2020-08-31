@@ -25,7 +25,7 @@
 
 
 import math
-import pipelined_cordic
+from . import pipelined_cordic
 from myhdl import *
 
 import numpy as np
@@ -141,14 +141,14 @@ def test_cordic(n=None):
     pyplot.axhline(math.sqrt(0.5**2+0.5**2))
     pyplot.axhline(-math.sqrt(0.5**2+0.5**2))
 
-    print 'Average amplitude error:', np.average(np.sqrt(np.power(outvals[:,0], 2) + np.power(outvals[:,1], 2)) - (INTMAX-1))
+    print('Average amplitude error:', np.average(np.sqrt(np.power(outvals[:,0], 2) + np.power(outvals[:,1], 2)) - (INTMAX-1)))
 
     pyplot.subplot(413, title="phase error of CORDIC")
     pyplot.plot(phases, ((np.arctan2(outvals[:,1], outvals[:,0]) - phases + np.pi) % (2*np.pi) - np.pi), '.')
     pyplot.axhline(np.arctan2(math.sqrt(0.5**2+0.5**2), INTMAX-1), ls=':', label="Rect")
     pyplot.axhline(-np.arctan2(math.sqrt(0.5**2+0.5**2), INTMAX-1), ls=':')
 
-    print 'Average phase error:', np.average((np.arctan2(outvals[:,1], outvals[:,0]) - phases + np.pi) % (2*np.pi) - np.pi)
+    print('Average phase error:', np.average((np.arctan2(outvals[:,1], outvals[:,0]) - phases + np.pi) % (2*np.pi) - np.pi))
 
     pyplot.axhline(2*np.pi / PHASE_MAX / 2, ls='--', label="Phase")
     pyplot.axhline(-2*np.pi / PHASE_MAX / 2, ls='--')

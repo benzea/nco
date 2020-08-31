@@ -26,6 +26,7 @@
 
 from myhdl import *
 
+@block
 def Rule30(clock, reset, rout, INITIAL_STATE=[1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0], UPDATE_RULE=[0,1,1,1,1,0,0,0]):
 
     INITIAL_STATE = tuple(INITIAL_STATE)
@@ -68,6 +69,6 @@ if __name__ == "__main__":
     reset = ResetSignal(bool(True), True, True)
     rout = Signal(intbv(0)[3:])
 
-    #toVerilog(Rule30, reset, clock, rout)
-    toVHDL(Rule30, clock, reset, rout)
+    inst = Rule30(clock, reset, rout)
+    inst.convert(hdl='VHDL')
 

@@ -28,6 +28,7 @@ import sys
 sys.path.append('..')
 from myhdl import *
 
+@block
 def NCOCordic(clock, reset, phi_step, out_cos, out_sin, PHASE_PRECISION=None, DITHER=None, LUT_DEPTH=None, CORDIC_STAGES=None):
 
     if PHASE_PRECISION is None:
@@ -35,7 +36,7 @@ def NCOCordic(clock, reset, phi_step, out_cos, out_sin, PHASE_PRECISION=None, DI
         PHASE_PRECISION = len(out_cos) + 1
 
     # Calculate a name for the NCO
-    NCOCordic.func_name = "NCOCordic_%i_%i_%i_%i" % (PHASE_PRECISION, len(out_cos), LUT_DEPTH if LUT_DEPTH else 0, CORDIC_STAGES if CORDIC_STAGES else 0)
+    NCOCordic.__name__ = "NCOCordic_%i_%i_%i_%i" % (PHASE_PRECISION, len(out_cos), LUT_DEPTH if LUT_DEPTH else 0, CORDIC_STAGES if CORDIC_STAGES else 0)
 
     instances = []
 
@@ -93,7 +94,7 @@ if __name__ == "__main__":
     try:
         from toVHDL_kh import toVHDL_kh as toVHDL
     except:
-        print "Not keeping hierarchy as toVHDL_kh could not be imported!"
+        print("Not keeping hierarchy as toVHDL_kh could not be imported!")
 
     toVHDL(NCOCordic, clock, reset, phi_step, cos_out, sin_out, LUT_DEPTH=10, DITHER=3)
 
